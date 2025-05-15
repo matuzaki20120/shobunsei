@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行政書士試験 処分性クイズ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles if needed */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .quiz-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px; /* Tailwind rounded-xl */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* Tailwind shadow-xl */
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        .question {
+            font-size: 1.25rem; /* Tailwind text-xl */
+            margin-bottom: 20px;
+            min-height: 80px; /* Ensure space even if question is short */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-size: 1rem; /* Tailwind text-base */
+            min-height: 40px; /* Ensure space for feedback */
+        }
+        .correct {
+            color: #10b981; /* Tailwind green-500 */
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #ef4444; /* Tailwind red-500 */
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 8px; /* Tailwind rounded-lg */
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-ari {
+            background-color: #3b82f6; /* Tailwind blue-500 */
+            color: white;
+        }
+        .btn-ari:hover:not(:disabled) {
+            background-color: #2563eb; /* Tailwind blue-600 */
+        }
+        .btn-nashi {
+            background-color: #ef4444; /* Tailwind red-500 */
+            color: white;
+        }
+        .btn-nashi:hover:not(:disabled) {
+            background-color: #dc2626; /* Tailwind red-600 */
+        }
+        .btn-next {
+             background-color: #60a5fa; /* Tailwind blue-400 */
+             color: white;
+             margin-top: 20px;
+        }
+         .btn-next:hover:not(:disabled) {
+            background-color: #3b82f6; /* Tailwind blue-500 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h1 class="text-2xl font-bold mb-6">処分性クイズ</h1>
+        <div id="question" class="question"></div>
+        <div class="options">
+            <button id="btn-ari" class="btn-ari">処分性あり</button>
+            <button id="btn-nashi" class="btn-nashi">処分性なし</button>
+        </div>
+        <div id="feedback" class="feedback"></div>
+        <button id="btn-next" class="btn-next" disabled>次の問題</button>
+    </div>
+
+    <script>
+        // Quiz data based on the provided Canvas content
+        const quizData = [
+            { case: "供託金取戻請求に対する供託官の却下 (最大判昭45.7.15)", disposition: "処分性あり" },
+            { case: "労働基準監督署長による労災就学援護費の支給決定 (最判平15.9.4)", disposition: "処分性あり" },
+            { case: "国有財産法上の普通財産の払下げ (最判昭35.7.12)", disposition: "処分性なし" },
+            { case: "ごみ焼却場の設置 (最判昭39.10.29)", disposition: "処分性なし" },
+            { case: "農地法に基づく農地の売払い (最大判昭46.1.20)", disposition: "処分性なし" },
+            { case: "公営福祉施設の民間移管にかかる事業者選考の応募者に対する「決定に至らなかった」通知 (最判平23.6.14)", disposition: "処分性なし" },
+            { case: "建築許可に対する消防長の同意 (最判昭34.1.29)", disposition: "処分性なし" },
+            { case: "通達 (最判昭43.12.24)", disposition: "処分性なし" },
+            { case: "校長が発した職務命令 (最判平24.2.9)", disposition: "処分性なし" },
+            { case: "建築基準法上の2項道路の一括指定 (最判平14.1.17)", disposition: "処分性あり" },
+            { case: "特定の保育所を廃止する条例の制定 (最判平21.11.26)", disposition: "処分性あり" },
+            { case: "簡易水道事業給水条例の制定 (最判平18.7.14)", disposition: "処分性なし" },
+            { case: "市町村営の土地改良事業の事業施行の認可 (最判昭61.2.13)", disposition: "処分性あり" },
+            { case: "第二種市街地再開発事業計画 (最判平4.11.26)", disposition: "処分性あり" },
+            { case: "土地区画整理事業の事業計画決定 (最判平20.9.10)", disposition: "処分性あり" },
+            { case: "都市計画決定としてなされる用途地域の指定 (最判昭57.4.22)", disposition: "処分性なし" },
+            { case: "都市計画法による地区計画 (最判平6.4.22)", disposition: "処分性なし" },
+            { case: "輸入禁制品該当の通知 (最判昭54.12.25)", disposition: "処分性あり" },
+            { case: "病院開設中止勧告 (最判平17.7.15)", disposition: "処分性あり" },
+            { case: "所得税法に基づく税務署長の納税告知 (最判昭45.12.24)", disposition: "処分性あり" },
+            { case: "登記機関のする還付請求の拒否通知 (最判平17.4.14)", disposition: "処分性あり" },
+            { case: "海難原因解明裁決 (最大判昭36.3.15)", disposition: "処分性なし" },
+            { case: "道路交通法の反則金の通告 (最判昭57.7.15)", disposition: "処分性なし" },
+            { case: "公共施設管理者の同意を拒否する行為 (最判平7.3.23)", disposition: "処分性なし" },
+            { case: "住民票に世帯主と続柄を記載する行為 (最判平11.1.21)", disposition: "処分性なし" }
+        ];
+
+        let currentQuestionIndex = 0;
+        const questionElement = document.getElementById('question');
+        const btnAri = document.getElementById('btn-ari');
+        const btnNashi = document.getElementById('btn-nashi');
+        const feedbackElement = document.getElementById('feedback');
+        const btnNext = document.getElementById('btn-next');
+
+        // Function to shuffle array (Fisher-Yates Shuffle)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+            return array;
+        }
+
+        // Shuffle quiz data on load
+        const shuffledQuizData = shuffleArray([...quizData]); // Create a copy to avoid modifying original
+
+        // Function to load a question
+        function loadQuestion() {
+            if (currentQuestionIndex < shuffledQuizData.length) {
+                const currentQuestion = shuffledQuizData[currentQuestionIndex];
+                questionElement.textContent = currentQuestion.case;
+                feedbackElement.textContent = '';
+                feedbackElement.className = 'feedback'; // Reset feedback class
+                btnAri.disabled = false;
+                btnNashi.disabled = false;
+                btnNext.disabled = true;
+            } else {
+                // End of quiz
+                questionElement.textContent = 'クイズ終了！お疲れ様でした。';
+                btnAri.style.display = 'none';
+                btnNashi.style.display = 'none';
+                btnNext.style.display = 'none';
+                feedbackElement.textContent = '';
+            }
+        }
+
+        // Function to check the answer
+        function checkAnswer(selectedAnswer) {
+            const correctAnswer = shuffledQuizData[currentQuestionIndex].disposition;
+            btnAri.disabled = true;
+            btnNashi.disabled = true;
+            btnNext.disabled = false;
+
+            if (selectedAnswer === correctAnswer) {
+                feedbackElement.textContent = '正解です！';
+                feedbackElement.className = 'feedback correct';
+            } else {
+                feedbackElement.textContent = `不正解です。正解は「${correctAnswer}」でした。`;
+                feedbackElement.className = 'feedback incorrect';
+            }
+        }
+
+        // Event listeners for answer buttons
+        btnAri.addEventListener('click', () => checkAnswer('処分性あり'));
+        btnNashi.addEventListener('click', () => checkAnswer('処分性なし'));
+
+        // Event listener for next button
+        btnNext.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        // Load the first question when the page loads
+        window.onload = loadQuestion;
+
+    </script>
+
+</body>
+</html>
