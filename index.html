@@ -3,197 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>行政書士試験 処分性クイズ</title>
+    <title>行政書士試験対策クイズ</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles if needed */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Tailwind gray-100 */
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+            padding: 1rem;
+            margin: 0;
         }
         .quiz-container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px; /* Tailwind rounded-xl */
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* Tailwind shadow-xl */
-            max-width: 600px;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem; /* Tailwind rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind shadow-lg */
             width: 100%;
-            text-align: center;
+            max-width: 600px;
         }
-        .question {
+        .question-text {
             font-size: 1.25rem; /* Tailwind text-xl */
-            margin-bottom: 20px;
-            min-height: 80px; /* Ensure space even if question is short */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-weight: 600; /* Tailwind font-semibold */
+            margin-bottom: 1.5rem; /* Tailwind mb-6 */
+            color: #1f2937; /* Tailwind gray-800 */
+            line-height: 1.6;
         }
-        .feedback {
-            margin-top: 20px;
-            font-size: 1rem; /* Tailwind text-base */
-            min-height: 40px; /* Ensure space for feedback */
-        }
-        .correct {
-            color: #10b981; /* Tailwind green-500 */
-            font-weight: bold;
-        }
-        .incorrect {
-            color: #ef4444; /* Tailwind red-500 */
-            font-weight: bold;
-        }
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 8px; /* Tailwind rounded-lg */
-            font-size: 1rem;
+        .answer-button {
+            width: 100%;
+            padding: 0.75rem 1rem; /* Tailwind py-3 px-4 */
+            margin-bottom: 0.75rem; /* Tailwind mb-3 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            font-weight: 600; /* Tailwind font-semibold */
+            transition: background-color 0.3s, opacity 0.3s;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            border: 1px solid transparent;
         }
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .answer-button:hover:not(:disabled) {
+            opacity: 0.9;
         }
-        .btn-ari {
+        .button-ari { /* This class will be used for the "あり" type button styling */
             background-color: #3b82f6; /* Tailwind blue-500 */
             color: white;
         }
-        .btn-ari:hover:not(:disabled) {
+        .button-ari:hover:not(:disabled) {
             background-color: #2563eb; /* Tailwind blue-600 */
         }
-        .btn-nashi {
+        .button-nashi { /* This class will be used for the "なし" type button styling */
             background-color: #ef4444; /* Tailwind red-500 */
             color: white;
         }
-        .btn-nashi:hover:not(:disabled) {
+        .button-nashi:hover:not(:disabled) {
             background-color: #dc2626; /* Tailwind red-600 */
         }
-        .btn-next {
-             background-color: #60a5fa; /* Tailwind blue-400 */
-             color: white;
-             margin-top: 20px;
+        .feedback {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
         }
-         .btn-next:hover:not(:disabled) {
+        .feedback.correct {
+            background-color: #d1fae5; /* Tailwind green-100 */
+            color: #065f46; /* Tailwind green-700 */
+            border: 1px solid #6ee7b7; /* Tailwind green-300 */
+        }
+        .feedback.incorrect {
+            background-color: #fee2e2; /* Tailwind red-100 */
+            color: #991b1b; /* Tailwind red-700 */
+            border: 1px solid #fca5a5; /* Tailwind red-300 */
+        }
+        .next-button { /* General style for next, restart, back buttons */
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        .next-button:hover {
+            opacity: 0.9;
+        }
+        .score {
+            margin-top: 1.5rem;
+            font-size: 1.125rem; /* Tailwind text-lg */
+            font-weight: 600;
+            color: #374151; /* Tailwind gray-700 */
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb; /* Tailwind gray-200 */
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 1rem;
             background-color: #3b82f6; /* Tailwind blue-500 */
+            width: 0%;
+            transition: width 0.3s ease-in-out;
+            text-align: center;
+            color: white;
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+        .category-tag {
+            display: inline-block;
+            background-color: #e0e7ff; /* indigo-100 */
+            color: #3730a3; /* indigo-800 */
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px; /* rounded-full */
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+        .case-reference {
+            font-size: 0.875rem; /* text-sm */
+            color: #6b7280; /* gray-500 */
+            margin-top: 0.5rem;
+        }
+        /* Styles for selection screen */
+        #selection-screen button {
+             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
         }
     </style>
 </head>
 <body>
-
-    <div class="quiz-container">
-        <h1 class="text-2xl font-bold mb-6">処分性クイズ</h1>
-        <div id="question" class="question"></div>
-        <div class="options">
-            <button id="btn-ari" class="btn-ari">処分性あり</button>
-            <button id="btn-nashi" class="btn-nashi">処分性なし</button>
+    <div id="app-root">
+        <div id="selection-screen" class="flex flex-col items-center justify-center w-full p-4">
+            <h1 class="text-4xl font-bold text-gray-800 mb-10 text-center">行政書士試験対策クイズ</h1>
+            <div class="space-y-6 w-full max-w-sm">
+                <button id="select-shobunsei" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg text-lg transition duration-150 ease-in-out">
+                    処分性クイズ
+                </button>
+                <button id="select-genkoku" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg text-lg transition duration-150 ease-in-out">
+                    原告適格クイズ
+                </button>
+            </div>
         </div>
-        <div id="feedback" class="feedback"></div>
-        <button id="btn-next" class="btn-next" disabled>次の問題</button>
+
+        <div id="quiz-main-container" style="display:none;" class="w-full">
+            <div class="quiz-container mx-auto"> <h1 id="quiz-title" class="text-3xl font-bold text-center mb-6 text-gray-800"></h1>
+                <div id="quiz-area">
+                    <div class="progress-bar-container">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+                    <div id="category-display" class="category-tag" style="display:none;"></div>
+                    <p id="question" class="question-text"></p>
+                    <div id="options">
+                        <button id="btn-ari" class="answer-button button-ari"></button>
+                        <button id="btn-nashi" class="answer-button button-nashi"></button>
+                    </div>
+                    <div id="feedback" class="feedback" style="display:none;"></div>
+                    <div id="case-reference-display" class="case-reference" style="display:none;"></div>
+                    <button id="next-btn" class="next-button bg-emerald-500 hover:bg-emerald-600" style="display:none;">次の問題へ</button>
+                </div>
+                <div id="result-area" style="display:none;">
+                    <h2 class="text-2xl font-bold text-center mb-4">クイズ終了！</h2>
+                    <p id="score" class="score text-center"></p>
+                    <p id="percentage" class="score text-center mb-4"></p>
+                    <button id="restart-btn" class="next-button bg-emerald-500 hover:bg-emerald-600">もう一度挑戦する</button>
+                    <button id="back-to-selection-btn" class="next-button bg-gray-500 hover:bg-gray-600" style="margin-top: 0.5rem;">クイズ選択に戻る</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Quiz data based on the provided Canvas content
-        const quizData = [
-            { case: "供託金取戻請求に対する供託官の却下 (最大判昭45.7.15)", disposition: "処分性あり" },
-            { case: "労働基準監督署長による労災就学援護費の支給決定 (最判平15.9.4)", disposition: "処分性あり" },
-            { case: "国有財産法上の普通財産の払下げ (最判昭35.7.12)", disposition: "処分性なし" },
-            { case: "ごみ焼却場の設置 (最判昭39.10.29)", disposition: "処分性なし" },
-            { case: "農地法に基づく農地の売払い (最大判昭46.1.20)", disposition: "処分性なし" },
-            { case: "公営福祉施設の民間移管にかかる事業者選考の応募者に対する「決定に至らなかった」通知 (最判平23.6.14)", disposition: "処分性なし" },
-            { case: "建築許可に対する消防長の同意 (最判昭34.1.29)", disposition: "処分性なし" },
-            { case: "通達 (最判昭43.12.24)", disposition: "処分性なし" },
-            { case: "校長が発した職務命令 (最判平24.2.9)", disposition: "処分性なし" },
-            { case: "建築基準法上の2項道路の一括指定 (最判平14.1.17)", disposition: "処分性あり" },
-            { case: "特定の保育所を廃止する条例の制定 (最判平21.11.26)", disposition: "処分性あり" },
-            { case: "簡易水道事業給水条例の制定 (最判平18.7.14)", disposition: "処分性なし" },
-            { case: "市町村営の土地改良事業の事業施行の認可 (最判昭61.2.13)", disposition: "処分性あり" },
-            { case: "第二種市街地再開発事業計画 (最判平4.11.26)", disposition: "処分性あり" },
-            { case: "土地区画整理事業の事業計画決定 (最判平20.9.10)", disposition: "処分性あり" },
-            { case: "都市計画決定としてなされる用途地域の指定 (最判昭57.4.22)", disposition: "処分性なし" },
-            { case: "都市計画法による地区計画 (最判平6.4.22)", disposition: "処分性なし" },
-            { case: "輸入禁制品該当の通知 (最判昭54.12.25)", disposition: "処分性あり" },
-            { case: "病院開設中止勧告 (最判平17.7.15)", disposition: "処分性あり" },
-            { case: "所得税法に基づく税務署長の納税告知 (最判昭45.12.24)", disposition: "処分性あり" },
-            { case: "登記機関のする還付請求の拒否通知 (最判平17.4.14)", disposition: "処分性あり" },
-            { case: "海難原因解明裁決 (最大判昭36.3.15)", disposition: "処分性なし" },
-            { case: "道路交通法の反則金の通告 (最判昭57.7.15)", disposition: "処分性なし" },
-            { case: "公共施設管理者の同意を拒否する行為 (最判平7.3.23)", disposition: "処分性なし" },
-            { case: "住民票に世帯主と続柄を記載する行為 (最判平11.1.21)", disposition: "処分性なし" }
+        // --- クイズデータ定義 ---
+        const shobunseiData = [
+            { question: "供託金取戻請求に対する供託官の却下", answer: true, category: "私法上の行為", caseReference: "最大判昭45.7.15" },
+            { question: "労働基準監督署長による労災就学援護費の支給決定", answer: true, category: "私法上の行為", caseReference: "最判平15.9.4" },
+            { question: "国有財産法上の普通財産の払下げ", answer: false, category: "私法上の行為", caseReference: "最判昭35.7.12" },
+            { question: "ごみ焼却場の設置", answer: false, category: "私法上の行為", caseReference: "最判昭39.10.29" },
+            { question: "農地法に基づく農地の売払い", answer: false, category: "私法上の行為", caseReference: "最大判昭46.1.20" },
+            { question: "公営福祉施設の民間移管にかかる事業者選考の応募者に対する「決定に至らなかった」通知", answer: false, category: "私法上の行為", caseReference: "最判平23.6.14" },
+            { question: "建築許可に対する消防長の同意", answer: false, category: "内部的行為", caseReference: "最判昭34.1.29" },
+            { question: "通達", answer: false, category: "内部的行為", caseReference: "最判昭43.12.24" },
+            { question: "校長が発した職務命令", answer: false, category: "内部的行為", caseReference: "最判平24.2.9" },
+            { question: "建築基準法上の2項道路の一括指定", answer: true, category: "規範定立行為", caseReference: "最判平14.1.17" },
+            { question: "特定の保育所を廃止する条例の制定", answer: true, category: "規範定立行為", caseReference: "最判平21.11.26" },
+            { question: "簡易水道事業給水条例の制定", answer: false, category: "規範定立行為", caseReference: "最判平18.7.14" },
+            { question: "市町村営の土地改良事業の事業施行の認可", answer: true, category: "中間的行為", caseReference: "最判昭61.2.13" },
+            { question: "第二種市街地再開発事業計画", answer: true, category: "中間的行為", caseReference: "最判平4.11.26" },
+            { question: "土地区画整理事業の事業計画決定", answer: true, category: "中間的行為", caseReference: "最判平20.9.10" },
+            { question: "都市計画決定としてなされる用途地域の指定", answer: false, category: "中間的行為", caseReference: "最判昭57.4.22" },
+            { question: "都市計画法による地区計画", answer: false, category: "中間的行為", caseReference: "最判平6.4.22" },
+            { question: "輸入禁制品該当の通知", answer: true, category: "実行為（事実行為）", caseReference: "最判昭54.12.25" },
+            { question: "病院開設中止勧告", answer: true, category: "実行為（事実行為）", caseReference: "最判平17.7.15" },
+            { question: "所得税法に基づく税務署長の納税告知", answer: true, category: "実行為（事実行為）", caseReference: "最判昭45.12.24" },
+            { question: "登記機関のする還付請求の拒否通知", answer: true, category: "実行為（事実行為）", caseReference: "最判平17.4.14" },
+            { question: "海難原因解明裁決", answer: false, category: "実行為（事実行為）", caseReference: "最大判昭36.3.15" },
+            { question: "道路交通法の反則金の通告", answer: false, category: "実行為（事実行為）", caseReference: "最判昭57.7.15" },
+            { question: "公共施設管理者の同意を拒否する行為", answer: false, category: "実行為（事実行為）", caseReference: "最判平7.3.23" },
+            { question: "住民票に世帯主と続柄を記載する行為", answer: false, category: "実行為（事実行為）", caseReference: "最判平11.1.21" }
         ];
 
-        let currentQuestionIndex = 0;
-        const questionElement = document.getElementById('question');
+        const genkokuData = [
+            { question: "公衆浴場の許可の取消しを求める既存業者", answer: true, caseReference: "最判昭37.1.19" },
+            { question: "保安林指定解除の取消しを求める周辺住民", answer: true, caseReference: "最判昭57.9.9" },
+            { question: "航空運送事業免許の取消しを求める飛行場周辺住民", answer: true, caseReference: "最判平1.2.17" },
+            { question: "都市計画事業認可の取消しを求める周辺住民", answer: true, caseReference: "最大判平17.12.7" },
+            { question: "場外車券発売施設設置許可の取消しを求める区域内の医療施設開設者", answer: true, caseReference: "最判平21.10.15" },
+            { question: "質屋営業の許可の取消しを求める既存の質屋営業者", answer: false, caseReference: "最判昭34.8.18" },
+            { question: "史跡指定解除処分の取消しを求める学術研究者", answer: false, caseReference: "最判平1.6.20" },
+            { question: "特急料金認可の取消しを求める利用者", answer: false, caseReference: "最判平1.4.13" },
+            { question: "風俗営業許可の取消しを求める周辺住民", answer: false, caseReference: "最判平10.12.17" },
+            { question: "場外車券発売施設設置許可の取消しを求める区域内の周辺住民", answer: false, caseReference: "最判平21.10.15" }
+        ];
+
+        const quizTypesInfo = {
+            shobunsei: { 
+                title: "処分性クイズ", 
+                positive: "処分性あり", 
+                negative: "処分性なし", 
+                data: shobunseiData, 
+                showCategory: true 
+            },
+            genkoku: { 
+                title: "原告適格クイズ", 
+                positive: "原告適格あり", 
+                negative: "原告適格なし", 
+                data: genkokuData, 
+                showCategory: false 
+            }
+        };
+
+        // --- DOM要素の取得 ---
+        const selectionScreenEl = document.getElementById('selection-screen');
+        const quizMainContainerEl = document.getElementById('quiz-main-container');
+        const quizTitleEl = document.getElementById('quiz-title');
+        
+        const questionEl = document.getElementById('question');
+        const categoryDisplayEl = document.getElementById('category-display');
+        const feedbackEl = document.getElementById('feedback');
+        const caseReferenceDisplayEl = document.getElementById('case-reference-display');
+        const nextBtn = document.getElementById('next-btn');
         const btnAri = document.getElementById('btn-ari');
         const btnNashi = document.getElementById('btn-nashi');
-        const feedbackElement = document.getElementById('feedback');
-        const btnNext = document.getElementById('btn-next');
+        
+        const quizAreaEl = document.getElementById('quiz-area');
+        const resultAreaEl = document.getElementById('result-area');
+        const scoreEl = document.getElementById('score');
+        const percentageEl = document.getElementById('percentage');
+        const restartBtn = document.getElementById('restart-btn');
+        const progressBarEl = document.getElementById('progress-bar');
 
-        // Function to shuffle array (Fisher-Yates Shuffle)
+        const selectShobunseiBtn = document.getElementById('select-shobunsei');
+        const selectGenkokuBtn = document.getElementById('select-genkoku');
+        const backToSelectionBtn = document.getElementById('back-to-selection-btn');
+
+        // --- クイズの状態管理 ---
+        let currentQuizType = ''; // 'shobunsei' or 'genkoku'
+        let activeQuizData = [];
+        let shuffledQuizData = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // --- 関数の定義 ---
+
+        // 問題をシャッフルする関数
         function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
+            const newArray = [...array]; // 配列のコピーを作成
+            for (let i = newArray.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
             }
-            return array;
+            return newArray;
+        }
+        
+        // クイズ選択画面を表示
+        function showSelectionScreen() {
+            quizMainContainerEl.style.display = 'none';
+            selectionScreenEl.style.display = 'flex'; // flexで中央揃え
+            progressBarEl.style.width = '0%'; // プログレスバーをリセット
         }
 
-        // Shuffle quiz data on load
-        const shuffledQuizData = shuffleArray([...quizData]); // Create a copy to avoid modifying original
+        // 特定のクイズを準備して開始
+        function prepareQuiz(quizType) {
+            currentQuizType = quizType;
+            const quizInfo = quizTypesInfo[currentQuizType];
+            activeQuizData = quizInfo.data;
+            
+            quizTitleEl.textContent = quizInfo.title;
+            btnAri.textContent = quizInfo.positive;
+            btnNashi.textContent = quizInfo.negative;
 
-        // Function to load a question
+            selectionScreenEl.style.display = 'none';
+            quizMainContainerEl.style.display = 'block'; // または 'flex' など、レイアウトに応じて
+            
+            startQuiz();
+        }
+
+        // クイズを開始/リセットする関数
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            shuffledQuizData = shuffleArray(activeQuizData);
+            
+            quizAreaEl.style.display = 'block';
+            resultAreaEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            feedbackEl.style.display = 'none';
+            caseReferenceDisplayEl.style.display = 'none';
+            categoryDisplayEl.style.display = 'none';
+            enableAnswerButtons();
+            loadQuestion();
+        }
+
+        // 問題を読み込む関数
         function loadQuestion() {
             if (currentQuestionIndex < shuffledQuizData.length) {
                 const currentQuestion = shuffledQuizData[currentQuestionIndex];
-                questionElement.textContent = currentQuestion.case;
-                feedbackElement.textContent = '';
-                feedbackElement.className = 'feedback'; // Reset feedback class
-                btnAri.disabled = false;
-                btnNashi.disabled = false;
-                btnNext.disabled = true;
+                questionEl.textContent = `${currentQuestionIndex + 1}. ${currentQuestion.question}`;
+                
+                const currentQuizDetails = quizTypesInfo[currentQuizType];
+                if (currentQuizDetails.showCategory && currentQuestion.category) {
+                    categoryDisplayEl.textContent = currentQuestion.category;
+                    categoryDisplayEl.style.display = 'inline-block';
+                } else {
+                    categoryDisplayEl.style.display = 'none';
+                }
+
+                feedbackEl.style.display = 'none';
+                caseReferenceDisplayEl.style.display = 'none';
+                nextBtn.style.display = 'none';
+                enableAnswerButtons();
+                updateProgressBar();
             } else {
-                // End of quiz
-                questionElement.textContent = 'クイズ終了！お疲れ様でした。';
-                btnAri.style.display = 'none';
-                btnNashi.style.display = 'none';
-                btnNext.style.display = 'none';
-                feedbackElement.textContent = '';
+                showResults();
             }
         }
 
-        // Function to check the answer
-        function checkAnswer(selectedAnswer) {
-            const correctAnswer = shuffledQuizData[currentQuestionIndex].disposition;
+        // プログレスバーを更新する関数
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex) / shuffledQuizData.length) * 100;
+            progressBarEl.style.width = `${progress}%`;
+        }
+
+        // 回答ボタンを有効化/無効化する関数
+        function enableAnswerButtons() {
+            btnAri.disabled = false;
+            btnNashi.disabled = false;
+            btnAri.classList.remove('opacity-50', 'cursor-not-allowed');
+            btnNashi.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function disableAnswerButtons() {
             btnAri.disabled = true;
             btnNashi.disabled = true;
-            btnNext.disabled = false;
-
-            if (selectedAnswer === correctAnswer) {
-                feedbackElement.textContent = '正解です！';
-                feedbackElement.className = 'feedback correct';
-            } else {
-                feedbackElement.textContent = `不正解です。正解は「${correctAnswer}」でした。`;
-                feedbackElement.className = 'feedback incorrect';
-            }
+            btnAri.classList.add('opacity-50', 'cursor-not-allowed');
+            btnNashi.classList.add('opacity-50', 'cursor-not-allowed');
         }
 
-        // Event listeners for answer buttons
-        btnAri.addEventListener('click', () => checkAnswer('処分性あり'));
-        btnNashi.addEventListener('click', () => checkAnswer('処分性なし'));
+        // 回答を処理する関数
+        function selectAnswer(userAnswer) {
+            disableAnswerButtons();
+            const currentQuestion = shuffledQuizData[currentQuestionIndex];
+            const correctAnswer = currentQuestion.answer;
+            const quizInfo = quizTypesInfo[currentQuizType];
+            
+            feedbackEl.style.display = 'block';
+            if (userAnswer === correctAnswer) {
+                feedbackEl.textContent = '正解！';
+                feedbackEl.className = 'feedback correct';
+                score++;
+            } else {
+                feedbackEl.textContent = `不正解。正解は「${correctAnswer ? quizInfo.positive : quizInfo.negative}」です。`;
+                feedbackEl.className = 'feedback incorrect';
+            }
 
-        // Event listener for next button
-        btnNext.addEventListener('click', () => {
+            if (currentQuestion.caseReference) {
+                caseReferenceDisplayEl.textContent = `判例: ${currentQuestion.caseReference}`;
+                caseReferenceDisplayEl.style.display = 'block';
+            } else {
+                caseReferenceDisplayEl.style.display = 'none';
+            }
+            nextBtn.style.display = 'block';
+        }
+
+        // 結果を表示する関数
+        function showResults() {
+            quizAreaEl.style.display = 'none';
+            resultAreaEl.style.display = 'block';
+            const totalQuestions = shuffledQuizData.length;
+            const percentageScore = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+            scoreEl.textContent = `スコア: ${score} / ${totalQuestions}`;
+            percentageEl.textContent = `正解率: ${percentageScore}%`;
+            progressBarEl.style.width = '100%';
+        }
+
+        // --- イベントリスナー ---
+        selectShobunseiBtn.addEventListener('click', () => prepareQuiz('shobunsei'));
+        selectGenkokuBtn.addEventListener('click', () => prepareQuiz('genkoku'));
+        
+        backToSelectionBtn.addEventListener('click', showSelectionScreen);
+        restartBtn.addEventListener('click', startQuiz); // 現在のクイズをリスタート
+
+        btnAri.addEventListener('click', () => selectAnswer(true));
+        btnNashi.addEventListener('click', () => selectAnswer(false));
+        
+        nextBtn.addEventListener('click', () => {
             currentQuestionIndex++;
-            loadQuestion();
+            if (currentQuestionIndex < shuffledQuizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
         });
 
-        // Load the first question when the page loads
-        window.onload = loadQuestion;
+        // --- 初期化 ---
+        showSelectionScreen(); // 最初に選択画面を表示
 
     </script>
-
 </body>
 </html>
