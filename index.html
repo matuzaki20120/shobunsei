@@ -45,14 +45,14 @@
         .answer-button:hover:not(:disabled) {
             opacity: 0.9;
         }
-        .button-ari { /* This class will be used for the "あり" type button styling */
+        .button-ari { /* "あり" ボタンのスタイル */
             background-color: #3b82f6; /* Tailwind blue-500 */
             color: white;
         }
         .button-ari:hover:not(:disabled) {
             background-color: #2563eb; /* Tailwind blue-600 */
         }
-        .button-nashi { /* This class will be used for the "なし" type button styling */
+        .button-nashi { /* "なし" ボタンのスタイル */
             background-color: #ef4444; /* Tailwind red-500 */
             color: white;
         }
@@ -75,7 +75,7 @@
             color: #991b1b; /* Tailwind red-700 */
             border: 1px solid #fca5a5; /* Tailwind red-300 */
         }
-        .next-button { /* General style for next, restart, back buttons */
+        .next-button { /* 次へ、再挑戦、戻るボタンの共通スタイル */
             display: block;
             width: 100%;
             padding: 0.75rem 1rem;
@@ -127,7 +127,7 @@
             color: #6b7280; /* gray-500 */
             margin-top: 0.5rem;
         }
-        /* Styles for selection screen */
+        /* クイズ選択画面のボタンスタイル */
         #selection-screen button {
              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
         }
@@ -144,11 +144,15 @@
                 <button id="select-genkoku" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg text-lg transition duration-150 ease-in-out">
                     原告適格クイズ
                 </button>
+                <button id="select-uttae" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg text-lg transition duration-150 ease-in-out">
+                    訴えの利益クイズ
+                </button>
             </div>
         </div>
 
         <div id="quiz-main-container" style="display:none;" class="w-full">
-            <div class="quiz-container mx-auto"> <h1 id="quiz-title" class="text-3xl font-bold text-center mb-6 text-gray-800"></h1>
+            <div class="quiz-container mx-auto">
+                <h1 id="quiz-title" class="text-3xl font-bold text-center mb-6 text-gray-800"></h1>
                 <div id="quiz-area">
                     <div class="progress-bar-container">
                         <div id="progress-bar" class="progress-bar"></div>
@@ -177,6 +181,7 @@
     <script>
         // --- クイズデータ定義 ---
         const shobunseiData = [
+            // ... (処分性クイズのデータは変更なし)
             { question: "供託金取戻請求に対する供託官の却下", answer: true, category: "私法上の行為", caseReference: "最大判昭45.7.15" },
             { question: "労働基準監督署長による労災就学援護費の支給決定", answer: true, category: "私法上の行為", caseReference: "最判平15.9.4" },
             { question: "国有財産法上の普通財産の払下げ", answer: false, category: "私法上の行為", caseReference: "最判昭35.7.12" },
@@ -205,6 +210,7 @@
         ];
 
         const genkokuData = [
+            // ... (原告適格クイズのデータは変更なし)
             { question: "公衆浴場の許可の取消しを求める既存業者", answer: true, caseReference: "最判昭37.1.19" },
             { question: "保安林指定解除の取消しを求める周辺住民", answer: true, caseReference: "最判昭57.9.9" },
             { question: "航空運送事業免許の取消しを求める飛行場周辺住民", answer: true, caseReference: "最判平1.2.17" },
@@ -215,6 +221,29 @@
             { question: "特急料金認可の取消しを求める利用者", answer: false, caseReference: "最判平1.4.13" },
             { question: "風俗営業許可の取消しを求める周辺住民", answer: false, caseReference: "最判平10.12.17" },
             { question: "場外車券発売施設設置許可の取消しを求める区域内の周辺住民", answer: false, caseReference: "最判平21.10.15" }
+        ];
+
+        const uttaeNoRiekiData = [
+            // 訴えの利益クイズのデータ
+            { question: "原告公務員死亡後の免職処分の取消し", answer: true, caseReference: "最判昭49.12.10" },
+            { question: "市街化調整区域内の工事完了後の都市計画法の開発許可の取消し", answer: true, caseReference: "最判平27.12.14" },
+            { question: "工事完了後の土地改良事業施行認可処分の取消し", answer: true, caseReference: "最判平4.1.24" },
+            { question: "免許証の有効期間の経過後の運転免許取消処分の取消し", answer: true, caseReference: "最判昭40.8.2" },
+            { question: "免職処分を受けた公務員が公職に立候補した後の免職処分取消し", answer: true, caseReference: "最大判昭40.4.28" },
+            { question: "優良運転手である旨の記載のない免許証を交付された後の免許更新処分の取消し", answer: true, caseReference: "最判平21.2.27" },
+            { question: "公文書が書証として提出された後の公文書非開示決定の取消し", answer: true, caseReference: "最大平14.2.28" },
+            { question: "公衆浴場の既存業者が求める新規業者に対する営業許可処分の取消し", answer: true, caseReference: "最判昭37.1.19" },
+            { question: "放送局免許拒否処分で競願関係にある者が期間経過後に再免許付与", answer: true, caseReference: "最判昭43.12.24" },
+            { question: "営業停止処分の後行処分の量定の加重", answer: true, caseReference: "最判平27.3.3" },
+            { question: "原告死亡後の生活保護変更決定の取消し", answer: false, caseReference: "最判昭42.5.24" },
+            { question: "原告死亡後の公文書の非公開決定の取消し", answer: false, caseReference: "最判平16.2.24" },
+            { question: "建築工事完了後の建築確認の取消し", answer: false, caseReference: "最判昭59.10.26" },
+            { question: "市街化区域内の工事完了後の都市計画法に基づく開発許可の取消し", answer: false, caseReference: "最判平5.9.10" },
+            { question: "使用期日の経過後の皇居外苑使用不許可処分の取消し", answer: false, caseReference: "最判昭28.12.23" },
+            { question: "代替施設設置後の保安林指定解除処分の取消し", answer: false, caseReference: "最判昭57.9.9" },
+            { question: "日本出国後の再入国不許可処分の取消し", answer: false, caseReference: "最判平10.4.10" },
+            { question: "保育の実施期間満了後の保育所廃止条例の制定行為の取消し", answer: false, caseReference: "最判平21.11.26" },
+            { question: "運転免許停止処分で1年経過", answer: false, caseReference: "最判昭55.11.25" }
         ];
 
         const quizTypesInfo = {
@@ -231,6 +260,13 @@
                 negative: "原告適格なし", 
                 data: genkokuData, 
                 showCategory: false 
+            },
+            uttae: { // 「訴えの利益クイズ」用の設定
+                title: "訴えの利益クイズ",
+                positive: "訴えの利益あり",
+                negative: "訴えの利益なし",
+                data: uttaeNoRiekiData,
+                showCategory: false // 訴えの利益クイズではカテゴリ表示は通常不要
             }
         };
 
@@ -256,10 +292,11 @@
 
         const selectShobunseiBtn = document.getElementById('select-shobunsei');
         const selectGenkokuBtn = document.getElementById('select-genkoku');
+        const selectUttaeBtn = document.getElementById('select-uttae'); // 新しいボタンの参照
         const backToSelectionBtn = document.getElementById('back-to-selection-btn');
 
         // --- クイズの状態管理 ---
-        let currentQuizType = ''; // 'shobunsei' or 'genkoku'
+        let currentQuizType = ''; 
         let activeQuizData = [];
         let shuffledQuizData = [];
         let currentQuestionIndex = 0;
@@ -269,7 +306,7 @@
 
         // 問題をシャッフルする関数
         function shuffleArray(array) {
-            const newArray = [...array]; // 配列のコピーを作成
+            const newArray = [...array];
             for (let i = newArray.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
@@ -280,8 +317,8 @@
         // クイズ選択画面を表示
         function showSelectionScreen() {
             quizMainContainerEl.style.display = 'none';
-            selectionScreenEl.style.display = 'flex'; // flexで中央揃え
-            progressBarEl.style.width = '0%'; // プログレスバーをリセット
+            selectionScreenEl.style.display = 'flex';
+            progressBarEl.style.width = '0%';
         }
 
         // 特定のクイズを準備して開始
@@ -295,7 +332,7 @@
             btnNashi.textContent = quizInfo.negative;
 
             selectionScreenEl.style.display = 'none';
-            quizMainContainerEl.style.display = 'block'; // または 'flex' など、レイアウトに応じて
+            quizMainContainerEl.style.display = 'block';
             
             startQuiz();
         }
@@ -401,9 +438,10 @@
         // --- イベントリスナー ---
         selectShobunseiBtn.addEventListener('click', () => prepareQuiz('shobunsei'));
         selectGenkokuBtn.addEventListener('click', () => prepareQuiz('genkoku'));
+        selectUttaeBtn.addEventListener('click', () => prepareQuiz('uttae')); // 新しいクイズのイベントリスナー
         
         backToSelectionBtn.addEventListener('click', showSelectionScreen);
-        restartBtn.addEventListener('click', startQuiz); // 現在のクイズをリスタート
+        restartBtn.addEventListener('click', startQuiz);
 
         btnAri.addEventListener('click', () => selectAnswer(true));
         btnNashi.addEventListener('click', () => selectAnswer(false));
@@ -418,7 +456,7 @@
         });
 
         // --- 初期化 ---
-        showSelectionScreen(); // 最初に選択画面を表示
+        showSelectionScreen();
 
     </script>
 </body>
